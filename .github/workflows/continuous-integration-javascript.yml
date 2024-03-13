@@ -1,0 +1,21 @@
+name: CI / JavaScript
+
+on:
+  pull_request:
+    paths:
+      - CypressTests
+    types: [opened, synchronize]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      working-directory: CypressTests
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: lint cypress tests
+        run: |
+          npm ci
+          npm run lint
