@@ -9,7 +9,7 @@ COPY . .
 
 
 ARG ASPNET_IMAGE_TAG
-FROM mcr.microsoft.com/dotnet/aspnet:6.0.9-bullseye-slim AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0.28-bullseye-slim AS final
 
 COPY --from=build /app /app
 
