@@ -1,5 +1,5 @@
 ARG ASPNET_IMAGE_TAG=7.0-bullseye-slim-amd64
-ARG DOTNET_SDK=7.0
+ARG DOTNET_SDK=8.0
 
 # Stage 2 - Build and publish dotnet application
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK} AS publish
