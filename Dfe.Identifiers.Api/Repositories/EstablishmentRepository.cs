@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dfe.Identifiers.Api.Repositories;
 
-public class EstablishmentRepository
+public class EstablishmentRepository : IEstablishmentRepository
 {
     private MstrContext _context;
 

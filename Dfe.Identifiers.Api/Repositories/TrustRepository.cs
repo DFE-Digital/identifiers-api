@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dfe.Identifiers.Api.Repositories
 {
-    public class TrustRepository
+    public class TrustRepository : ITrustRepository
     {
         private MstrContext _context;
 
