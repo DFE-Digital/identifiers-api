@@ -1,11 +1,11 @@
+using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Api.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 
@@ -23,3 +23,14 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+void ConfigureServices(IServiceCollection services, IConfiguration config)
+{
+    services.AddControllers();
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+    services.AddScoped<ITrustRepository, TrustRepository>();
+    services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
+    services.AddDbContext<MstrContext>(options =>
+        options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+}
