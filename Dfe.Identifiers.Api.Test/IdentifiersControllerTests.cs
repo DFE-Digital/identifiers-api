@@ -83,7 +83,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         };
 
         var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await Sut.GetIdentifiers(identifier, cancellationToken);
 
         response.Result.Should().NotBeNull();
         response.Result.Should().BeOfType(typeof(OkObjectResult));
@@ -105,7 +105,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
     public async Task Get_TrustIdentifiers_AndNoOtherIdentifiersExist_Returns_Ok(TrustIdTypes trustIdType)
     {
         using var context = Fixture.GetMstrContext();
-    
+
         var trustData = await BuildTrustSetWithEmptyData(context, trustIdType);
         var selectedTrust = trustData.First();
         var identifier = trustIdType switch
@@ -115,7 +115,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
             TrustIdTypes.GroupUID => selectedTrust.GroupUID,
             _ => throw new ArgumentOutOfRangeException(nameof(trustIdType), trustIdType, null)
         };
-        
+
         var cancellationToken = new CancellationToken();
         var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
 
@@ -129,14 +129,14 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         trusts.Length.Should().Be(1);
         AssertTrustIdentifierResponse(trusts.First(), selectedTrust);
     }
-    
+
     [Fact]
     public async Task Get_TrustIdentifiers_AndTrustDoesNotExist_Returns_EmptyList()
     {
         using var context = Fixture.GetMstrContext();
-    
+
         await BuildTrustSet(context);
-        
+
         var cancellationToken = new CancellationToken();
         var response = await Sut.GetIdentifiers("NoTrustExists", cancellationToken);
 
@@ -149,9 +149,9 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         var trusts = content!.Trusts;
         trusts.Length.Should().Be(0);
     }
-    
+
     // ESTABLISHMENTS
-    
+
     [Theory]
     [InlineData(EstablishmentsIdTypes.URN)]
     [InlineData(EstablishmentsIdTypes.UKPRN)]
@@ -159,18 +159,19 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
     public async Task Get_EstablishmentIdentifiers_AndEstablishmentExists_Returns_Ok(EstablishmentsIdTypes idType)
     {
         using var context = Fixture.GetMstrContext();
-    
+
         var trustData = CreateEstablishmentSet(context);
-    
+
         var selectedEstablishment = trustData.Establishments.First().Establishment;
         var identifier = idType switch
         {
             EstablishmentsIdTypes.URN => $"{selectedEstablishment.URN}",
             EstablishmentsIdTypes.UKPRN => selectedEstablishment.UKPRN,
-            EstablishmentsIdTypes.LAESTAB => $"{selectedEstablishment.LocalAuthority.Code}%2F{selectedEstablishment.EstablishmentNumber}",
+            EstablishmentsIdTypes.LAESTAB =>
+                $"{selectedEstablishment.LocalAuthority.Code}%2F{selectedEstablishment.EstablishmentNumber}",
             _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
         };
-    
+
         var cancellationToken = new CancellationToken();
         var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
 
@@ -184,18 +185,18 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         establishments.Length.Should().Be(1);
         AssertEstablishmentsIdentifierResponse(establishments.First(), selectedEstablishment);
     }
-    
+
     // Mixed 
     [Fact]
     public async Task Get_Identifiers_AndEstablishmentAndTrustExists_Returns_Ok()
     {
         using var context = Fixture.GetMstrContext();
-    
+
         var mixedData = CreateSameUKPRNDataSet(context);
-    
+
         var selectedEstablishment = mixedData.Establishments.First().Establishment;
         var selectedTrust = mixedData.Trust;
-        
+
         var cancellationToken = new CancellationToken();
         var response = await Sut.GetIdentifiers(MixedSameUkprn, cancellationToken);
 
@@ -250,12 +251,14 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
 
             trusts.Add(trust);
         }
+
         context.Trusts.AddRange(trusts);
         await context.SaveChangesAsync();
         return trusts;
     }
-    
-    private static async Task<List<Trust>> BuildTrustSetWithEmptyData(MstrContext context, TrustIdTypes trustIdTypeToKeep)
+
+    private static async Task<List<Trust>> BuildTrustSetWithEmptyData(MstrContext context,
+        TrustIdTypes trustIdTypeToKeep)
     {
         var trusts = await BuildTrustSet(context);
         foreach (var trust in trusts)
@@ -276,6 +279,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
                     throw new ArgumentOutOfRangeException(nameof(trustIdTypeToKeep), trustIdTypeToKeep, null);
             }
         }
+
         context.Trusts.UpdateRange(trusts);
         await context.SaveChangesAsync();
         return trusts;
@@ -286,43 +290,39 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         var trust = DatabaseModelBuilder.BuildTrust();
         context.Add(trust);
         context.SaveChanges();
-    
+
         var establishments = new List<EstablishmentDataSet>();
-    
+
         for (var idx = 0; idx < 3; idx++)
         {
             var localAuthority = context.LocalAuthorities.First(la => la.SK % 3 == idx);
             var establishmentDataSet = CreateEstablishment(localAuthority);
-    
+
             context.Establishments.Add(establishmentDataSet.Establishment);
             context.IfdPipelines.Add(establishmentDataSet.IfdPipeline);
-    
+
             establishments.Add(establishmentDataSet);
         }
-    
+
         context.SaveChanges();
-    
+
         var trustToEstablishmentLinks =
             LinkTrustToEstablishments(trust, establishments.Select(d => d.Establishment).ToList());
-    
+
         context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
-    
+
         context.SaveChanges();
-    
-        var result = new TrustDataSet()
-        {
-            Trust = trust,
-            Establishments = establishments
-        };
-    
+
+        var result = new TrustDataSet(Trust: trust, Establishments: establishments);
+
         return result;
     }
-    
+
     private static List<EducationEstablishmentTrust> LinkTrustToEstablishments(Trust trust,
         List<Establishment> establishments)
     {
         var result = new List<EducationEstablishmentTrust>();
-    
+
         establishments.ForEach(establishment =>
         {
             var educationEstablishmentTrust = new EducationEstablishmentTrust()
@@ -330,65 +330,56 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
                 TrustId = (int)trust.SK,
                 EducationEstablishmentId = (int)establishment.SK
             };
-    
+
             result.Add(educationEstablishmentTrust);
         });
-    
+
         return result;
     }
-    
+
     private static TrustDataSet CreateSameUKPRNDataSet(MstrContext context)
     {
         var trust = DatabaseModelBuilder.BuildTrust();
         trust.UKPRN = MixedSameUkprn;
         context.Add(trust);
         context.SaveChanges();
-    
+
         //Establishment
         var establishments = new List<EstablishmentDataSet>();
-    
+
         var establishmentDataSet = CreateEstablishment(context.LocalAuthorities.First());
         establishmentDataSet.Establishment.UKPRN = MixedSameUkprn;
-    
+
         context.Establishments.Add(establishmentDataSet.Establishment);
         context.IfdPipelines.Add(establishmentDataSet.IfdPipeline);
-    
+
         establishments.Add(establishmentDataSet);
-        
+
         context.SaveChanges();
-    
+
         var trustToEstablishmentLinks =
             LinkTrustToEstablishments(trust, establishments.Select(d => d.Establishment).ToList());
-    
+
         context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
-    
+
         context.SaveChanges();
-    
-        var result = new TrustDataSet()
-        {
-            Trust = trust,
-            Establishments = establishments
-        };
-    
+
+        var result = new TrustDataSet(Trust: trust, Establishments: establishments);
+
         return result;
     }
-    
+
     private static EstablishmentDataSet CreateEstablishment(LocalAuthority la)
     {
         var establishment = DatabaseModelBuilder.BuildEstablishment();
         var ifdPipeline = DatabaseModelBuilder.BuildIfdPipeline();
-    
+
         establishment.LocalAuthority = la;
         ifdPipeline.GeneralDetailsUrn = establishment.PK_GIAS_URN;
-    
-        return new EstablishmentDataSet()
-        {
-            Establishment = establishment,
-            IfdPipeline = ifdPipeline
-        };
-    
-        
+
+        return new EstablishmentDataSet(Establishment: establishment, IfdPipeline: ifdPipeline);
     }
+
     private static void AssertTrustIdentifierResponse(TrustIdentifiers actual, Trust expected)
     {
         actual.TrustReference.Should().Be(expected.GroupID);
@@ -417,15 +408,13 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         LAESTAB
     }
 
-    private record TrustDataSet
-    {
-        public Trust Trust { get; set; }
-        public List<EstablishmentDataSet> Establishments { get; set; }
-    }
+    private record TrustDataSet(
+        Trust Trust,
+        List<EstablishmentDataSet> Establishments
+    );
 
-    private record EstablishmentDataSet
-    {
-        public Establishment Establishment { get; set; }
-        public IfdPipeline IfdPipeline { get; set; }
-    }
+    private record EstablishmentDataSet(
+        Establishment Establishment,
+        IfdPipeline IfdPipeline
+    );
 }
