@@ -9,7 +9,6 @@ namespace Dfe.Identifiers.Api.Test
 {
     public class ApiTestFixture : IDisposable
     {
-        // private const string ConnectionStringKey = "ConnectionStrings:DefaultConnection";
         private const string connectionString = "Server=localhost,1433;Database=ApiTests;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905";
         private DbContextOptions<MstrContext> _dbContextOptions { get; init; }
 
@@ -28,17 +27,5 @@ namespace Dfe.Identifiers.Api.Test
         public void Dispose()
         {
         }
-
-        // private static string BuildDatabaseConnectionString(IConfigurationBuilder config)
-        // {
-        //     var currentConfig = config.Build();
-        //     var connection = currentConfig[ConnectionStringKey];
-        //     var sqlBuilder = new SqlConnectionStringBuilder(connection);
-        //     sqlBuilder.InitialCatalog = "ApiTests";
-        //
-        //     var result = sqlBuilder.ToString();
-        //
-        //     return result;
-        // }
     }
 }
