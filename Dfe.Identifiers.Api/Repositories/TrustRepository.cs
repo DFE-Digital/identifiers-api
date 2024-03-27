@@ -1,4 +1,5 @@
 ﻿using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Api.Interfaces;
 using Dfe.Identifiers.Api.Models;
 using Microsoft.EntityFrameworkCore;
 

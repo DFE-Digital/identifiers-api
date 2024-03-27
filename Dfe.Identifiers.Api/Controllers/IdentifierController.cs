@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Dfe.Identifiers.Api.Interfaces;
 using Dfe.Identifiers.Api.Models;
 using Dfe.Identifiers.Api.Models.Identifiers;
 using Dfe.Identifiers.Api.Repositories;

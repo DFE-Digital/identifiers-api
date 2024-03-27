@@ -1,6 +1,6 @@
 ﻿using Dfe.Identifiers.Api.Models;
 
-namespace Dfe.Identifiers.Api.Repositories;
+namespace Dfe.Identifiers.Api.Interfaces;
 
 public interface ITrustRepository
 {
