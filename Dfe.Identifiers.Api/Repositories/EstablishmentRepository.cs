@@ -1,10 +1,11 @@
-﻿using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Api.Interfaces;
 using Dfe.Identifiers.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dfe.Identifiers.Api.Repositories;
 
-public class EstablishmentRepository
+public class EstablishmentRepository : IEstablishmentRepository
 {
     private MstrContext _context;
 
@@ -17,8 +18,10 @@ public class EstablishmentRepository
         CancellationToken cancellationToken)
     {
         var establishments = await BaseQuery().Where(item =>
-                identifier.Equals(item.Establishment.UKPRN) || identifier.Equals(item.Establishment.URN.ToString()) || 
-                identifier.EndsWith(item.Establishment.EstablishmentNumber.ToString()) && identifier.StartsWith(item.LocalAuthority.Code))
+                identifier.Equals(item.Establishment.UKPRN) || identifier.Equals(item.Establishment.URN.ToString()) ||
+                (item.Establishment.EstablishmentNumber != null &&
+                 identifier.EndsWith(item.Establishment.EstablishmentNumber!.ToString()!) &&
+                 item.LocalAuthority.Code != null && identifier.StartsWith(item.LocalAuthority.Code)))
             .ToListAsync(cancellationToken);
         var results = establishments.Select(ToEstablishment).ToList();
         return results;
@@ -28,10 +31,16 @@ public class EstablishmentRepository
     {
         var result =
             from establishment in _context.Establishments
-            from ifdPipeline in _context.IfdPipelines.Where(i => i.GeneralDetailsUrn == establishment.PK_GIAS_URN).DefaultIfEmpty()
-            from establishmentType in _context.EstablishmentTypes.Where(e => e.SK == establishment.EstablishmentTypeId).DefaultIfEmpty()
-            from localAuthority in _context.LocalAuthorities.Where(l => l.SK == establishment.LocalAuthorityId).DefaultIfEmpty()
-            select new EstablishmentQueryResult { Establishment = establishment, IfdPipeline = ifdPipeline, LocalAuthority = localAuthority, EstablishmentType = establishmentType };
+            from ifdPipeline in _context.IfdPipelines.Where(i => i.GeneralDetailsUrn == establishment.PK_GIAS_URN)
+                .DefaultIfEmpty()
+            from establishmentType in _context.EstablishmentTypes.Where(e => e.SK == establishment.EstablishmentTypeId)
+                .DefaultIfEmpty()
+            from localAuthority in _context.LocalAuthorities.Where(l => l.SK == establishment.LocalAuthorityId)
+                .DefaultIfEmpty()
+            select new EstablishmentQueryResult(
+                Establishment: establishment, IfdPipeline: ifdPipeline, LocalAuthority: localAuthority,
+                EstablishmentType: establishmentType
+            );
 
         return result;
     }
@@ -45,14 +54,11 @@ public class EstablishmentRepository
 
         return result;
     }
-    
-    
 }
 
-internal record EstablishmentQueryResult
-{
-    public Establishment Establishment { get; set; }
-    public IfdPipeline IfdPipeline { get; set; }
-    public LocalAuthority LocalAuthority { get; set; }
-    public EstablishmentType EstablishmentType { get; set; }
-}
+internal record EstablishmentQueryResult(
+    Establishment Establishment,
+    IfdPipeline IfdPipeline,
+    LocalAuthority LocalAuthority,
+    EstablishmentType EstablishmentType
+);

@@ -24,7 +24,6 @@ public class MstrContext : DbContext
     public DbSet<EstablishmentType> EstablishmentTypes { get; set; } = null!;
     public DbSet<EducationEstablishmentTrust> EducationEstablishmentTrusts { get; set; } = null!;
     public DbSet<LocalAuthority> LocalAuthorities { get; set; } = null!;
-
     public DbSet<IfdPipeline> IfdPipelines { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -144,6 +143,12 @@ public class MstrContext : DbContext
         establishmentConfiguration.Property(e => e.ReligiousCharacterCode).HasColumnName("ReligiousCharacter(code)");
         establishmentConfiguration.Property(e => e.PhaseOfEducationCode).HasColumnName("PhaseOfEducation(code)");
         establishmentConfiguration.Property(e => e.ParliamentaryConstituencyCode).HasColumnName("ParliamentaryConstituency(code)");
+
+        establishmentConfiguration.Property(e => e.GiasLastChangedDate).HasColumnName("GiasLastChangedDate");
+        establishmentConfiguration.Property(e => e.NumberOfBoys).HasColumnName("NumberOfBoys");
+        establishmentConfiguration.Property(e => e.NumberOfGirls).HasColumnName("NumberOfGirls");
+        establishmentConfiguration.Property(e => e.SenUnitCapacity).HasColumnName("SenUnitCapacity");
+        establishmentConfiguration.Property(e => e.SenUnitOnRoll).HasColumnName("SenUnitOnRoll");
 
         establishmentConfiguration
             .HasOne(x => x.EstablishmentType)
