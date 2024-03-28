@@ -1,8 +1,7 @@
 describe('Identifiers endpoint tests', () => {
 
   const apiKey = Cypress.env('apiKey')
-  const baseUrl = Cypress.env('baseUrl')
-  const companiesHouseNumber = '11082297'
+  const baseUrl = Cypress.env('url')
   const ukprn = '10067112'
   const trustReferenceNumber = 'TR03739'
 
