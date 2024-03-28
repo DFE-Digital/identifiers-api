@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: CypressTests
+        working-directory: Dfe.Identifiers.Api.CypressTests
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

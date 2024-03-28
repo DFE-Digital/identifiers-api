@@ -55,7 +55,7 @@ public class MstrContext : DbContext
         establishmentConfiguration.HasKey(e => e.SK);
 
         establishmentConfiguration.ToTable("EducationEstablishment", DEFAULT_SCHEMA);
-        
+
         establishmentConfiguration.Property(e => e.Diocese).HasColumnName("Diocese");
         establishmentConfiguration.Property(e => e.OverallEffectiveness).HasColumnName("Overall effectiveness");
         establishmentConfiguration.Property(e => e.IsSafeguardingEffective).HasColumnName("Is safeguarding effective?");

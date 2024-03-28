@@ -3,14 +3,14 @@ name: CI / JavaScript
 on:
   pull_request:
     paths:
-      - CypressTests
+      - Dfe.Identifiers.Api.CypressTests
     types: [opened, synchronize]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     defaults:
-      working-directory: CypressTests
+      working-directory: Dfe.Identifiers.Api.CypressTests
     steps:
       - name: checkout code
         uses: actions/checkout@v4

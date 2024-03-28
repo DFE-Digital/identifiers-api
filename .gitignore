@@ -180,3 +180,8 @@ terraform.rc*
 !terraform.tfvars.example
 .terraform/
 backend.vars
+
+# Cypress
+
+node_modules/
+cypress.env.json
