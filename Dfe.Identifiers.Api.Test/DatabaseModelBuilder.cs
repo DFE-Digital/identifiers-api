@@ -1,11 +1,13 @@
 ﻿using AutoFixture;
-using Dfe.Identifiers.Api.Models;
+using Dfe.Identifiers.Domain.Models;
 
 namespace Dfe.Identifiers.Api.Test
 {
     public static class DatabaseModelBuilder
     {
         private static readonly Fixture _fixture = new Fixture();
+
+        private static readonly Random _random = new Random();
 
         public static Trust BuildTrust()
         {
@@ -29,21 +31,12 @@ namespace Dfe.Identifiers.Api.Test
         {
             var result = _fixture.Create<Establishment>();
             result.SK = null;
-            result.IfdPipeline = null;
             result.LocalAuthority = null;
             result.EstablishmentType = null;
             result.PK_GIAS_URN = _fixture.Create<int>().ToString();
-            result.EstablishmentTypeId = 228;
+            // Only 224 or 228 are valid in this subset of test data used in tests (see mstr context)
+            result.EstablishmentTypeId = 224; 
             result.LocalAuthorityId = 1;
-
-            return result;
-        }
-
-        public static IfdPipeline BuildIfdPipeline()
-        {
-            var result = _fixture.Create<IfdPipeline>();
-            result.SK = null;
-            result.GeneralDetailsUrn = _fixture.Create<int>().ToString();
 
             return result;
         }

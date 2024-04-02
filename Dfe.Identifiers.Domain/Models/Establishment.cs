@@ -1,4 +1,4 @@
-﻿namespace Dfe.Identifiers.Api.Models
+﻿namespace Dfe.Identifiers.Domain.Models
 {
     public class Establishment
     {
@@ -96,6 +96,5 @@
         public LocalAuthority? LocalAuthority { get; set; }
         public EstablishmentType? EstablishmentType{ get; set; }
 
-        public IfdPipeline? IfdPipeline { get; set; }
     }
 }

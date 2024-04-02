@@ -1,5 +1,5 @@
 ﻿using System.Net.Mime;
-using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

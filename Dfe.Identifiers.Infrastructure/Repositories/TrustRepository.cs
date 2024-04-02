@@ -1,19 +1,12 @@
-﻿using Dfe.Identifiers.Api.Context;
-using Dfe.Identifiers.Api.Interfaces;
-using Dfe.Identifiers.Api.Models;
+﻿using Dfe.Identifiers.Api.Interfaces;
+using Dfe.Identifiers.Domain.Models;
+using Dfe.Identifiers.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace Dfe.Identifiers.Api.Repositories
+namespace Dfe.Identifiers.Infrastructure.Repositories
 {
-    public class TrustRepository : ITrustRepository
+    public class TrustRepository(MstrContext context) : ITrustRepository
     {
-        private MstrContext _context;
-
-        public TrustRepository(MstrContext context)
-        {
-            _context = context;
-        }
-
         public async Task<List<Trust>> GetTrustsByIdentifier(string identifier, CancellationToken cancellationToken)
         {
             var trusts = await DefaultIncludes().AsNoTracking().Where(x =>
@@ -24,7 +17,7 @@ namespace Dfe.Identifiers.Api.Repositories
 
         private IQueryable<Trust> DefaultIncludes()
         {
-            var x = _context.Trusts
+            var x = context.Trusts
                 .Include(x => x.TrustType)
                 .AsQueryable();
 

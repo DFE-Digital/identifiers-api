@@ -1,8 +1,8 @@
-﻿using Dfe.Identifiers.Api.Models;
+﻿using Dfe.Identifiers.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Dfe.Identifiers.Api.Context;
+namespace Dfe.Identifiers.Infrastructure.Context;
 
 public class MstrContext : DbContext
 {
@@ -24,8 +24,7 @@ public class MstrContext : DbContext
     public DbSet<EstablishmentType> EstablishmentTypes { get; set; } = null!;
     public DbSet<EducationEstablishmentTrust> EducationEstablishmentTrusts { get; set; } = null!;
     public DbSet<LocalAuthority> LocalAuthorities { get; set; } = null!;
-    public DbSet<IfdPipeline> IfdPipelines { get; set; } = null!;
-
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -45,7 +44,6 @@ public class MstrContext : DbContext
         modelBuilder.Entity<EstablishmentType>(ConfigureEstablishmentType);
         modelBuilder.Entity<EducationEstablishmentTrust>(ConfigureEducationEstablishmentTrust);
         modelBuilder.Entity<LocalAuthority>(ConfigureLocalAuthority);
-        modelBuilder.Entity<IfdPipeline>(ConfigureIfdPipeline);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -161,10 +159,6 @@ public class MstrContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.LocalAuthorityId)
             .IsRequired(false);
-
-        // No relationship exists yet
-        // Make sure entity framework doesn't generate one
-        establishmentConfiguration.Ignore(x => x.IfdPipeline);
     }
 
     /// <summary>
@@ -261,26 +255,6 @@ public class MstrContext : DbContext
 
         establishmentTypeConfiguration.HasData(new EstablishmentType() { SK = 224, Code = "35", Name = "Free schools" });
         establishmentTypeConfiguration.HasData(new EstablishmentType() { SK = 228, Code = "18", Name = "Further education" });
-    }
-
-    private void ConfigureIfdPipeline(EntityTypeBuilder<IfdPipeline> ifdPipelineConfiguration)
-    {
-        ifdPipelineConfiguration.HasKey(e => e.SK);
-
-        ifdPipelineConfiguration.ToTable("IfdPipeline", DEFAULT_SCHEMA);
-
-        ifdPipelineConfiguration.Property(e => e.GeneralDetailsUrn)
-            .HasColumnName("General Details.URN");
-
-        ifdPipelineConfiguration.Property(e => e.DeliveryProcessPFI)
-            .HasColumnName("Delivery Process.PFI");
-        ifdPipelineConfiguration.Property(e => e.DeliveryProcessPAN)
-            .HasColumnName("Delivery Process.PAN");
-
-        ifdPipelineConfiguration.Property(e => e.ProjectTemplateInformationDeficit)
-            .HasColumnName("Project template information.Deficit?");
-        ifdPipelineConfiguration.Property(e => e.ProjectTemplateInformationViabilityIssue)
-            .HasColumnName("Project template information.Viability issue?");
     }
 
 }

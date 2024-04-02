@@ -1,6 +1,6 @@
-﻿namespace Dfe.Identifiers.Api.Models
+﻿namespace Dfe.Identifiers.Domain.Models
 {
-    public class LocalAuthority
+    public class TrustType
     {
         public long SK { get; set; }
         public string? Name { get; set; }
