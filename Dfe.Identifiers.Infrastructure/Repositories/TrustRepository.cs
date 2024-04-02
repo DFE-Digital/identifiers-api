@@ -9,19 +9,19 @@ namespace Dfe.Identifiers.Infrastructure.Repositories
     {
         public async Task<List<Trust>> GetTrustsByIdentifier(string identifier, CancellationToken cancellationToken)
         {
-            var trusts = await DefaultIncludes().AsNoTracking().Where(x =>
-                    identifier.Equals(x.UKPRN) || identifier.Equals(x.GroupID) || identifier.Equals(x.GroupUID))
+            var trusts = await DefaultIncludes().AsNoTracking().Where(trust =>
+                    identifier.Equals(trust.UKPRN) || identifier.Equals(trust.GroupID) || identifier.Equals(trust.GroupUID))
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
             return trusts;
         }
 
         private IQueryable<Trust> DefaultIncludes()
         {
-            var x = context.Trusts
-                .Include(x => x.TrustType)
+            var query = context.Trusts
+                .Include(trust => trust.TrustType)
                 .AsQueryable();
 
-            return x;
+            return query;
         }
     }
 }

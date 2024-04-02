@@ -22,11 +22,11 @@ public class EstablishmentRepository(MstrContext context) : IEstablishmentReposi
     }
     private IQueryable<EstablishmentQueryResult> BaseQuery()
     {
-        var result = from establishment in context.Establishments
-            from establishmentType in context.EstablishmentTypes.Where(e => e.SK == establishment.EstablishmentTypeId).DefaultIfEmpty()
-            from localAuthority in context.LocalAuthorities.Where(l => l.SK == establishment.LocalAuthorityId).DefaultIfEmpty()
+        var query = from establishment in context.Establishments
+            from establishmentType in context.EstablishmentTypes.Where(establishmentType => establishmentType.SK == establishment.EstablishmentTypeId).DefaultIfEmpty()
+            from localAuthority in context.LocalAuthorities.Where(localAuthority => localAuthority.SK == establishment.LocalAuthorityId).DefaultIfEmpty()
             select new EstablishmentQueryResult { Establishment = establishment, LocalAuthority = localAuthority, EstablishmentType = establishmentType };
 
-        return result;
+        return query;
     }
 }
