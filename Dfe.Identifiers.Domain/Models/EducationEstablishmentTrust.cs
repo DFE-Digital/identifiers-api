@@ -2,6 +2,7 @@
 {
     public class EducationEstablishmentTrust
     {
+        // Primary Key
         public int SK { get; set; } 
 
         // Foreign keys

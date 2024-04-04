@@ -2,8 +2,9 @@
 {
     public class Establishment
     {
+        // Primary key
         public long? SK { get; set; }
-
+        
         // Foreign keys
         public string? PK_GIAS_URN { get; set; }
         public long? PK_CDM_ID { get; set; }

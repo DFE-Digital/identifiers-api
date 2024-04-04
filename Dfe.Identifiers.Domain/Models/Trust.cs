@@ -2,6 +2,7 @@
 {
     public class Trust
     {
+        // Primary key
         public long? SK { get; set; }
         public long? TrustTypeId { get; set; }
         public long? RegionId { get; set; }
