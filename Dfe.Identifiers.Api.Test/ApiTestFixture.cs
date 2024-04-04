@@ -28,7 +28,7 @@ namespace Dfe.Identifiers.Api.Test
 
         private IConfigurationRoot Configuration { get; init; }
 
-        public MstrContext GetMstrContext() => new MstrContext(_dbContextOptions);
+        public MstrContext GetMstrContext() => new(_dbContextOptions);
 
         public void Dispose()
         {
