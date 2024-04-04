@@ -7,8 +7,6 @@ namespace Dfe.Identifiers.Api.Test
     {
         private static readonly Fixture _fixture = new Fixture();
 
-        private static readonly Random _random = new Random();
-
         public static Trust BuildTrust()
         {
             var result = _fixture.Create<Trust>();
@@ -31,7 +29,7 @@ namespace Dfe.Identifiers.Api.Test
             result.LocalAuthority = null;
             result.EstablishmentType = null;
             result.PK_GIAS_URN = _fixture.Create<int>().ToString();
-            // Only 224 or 228 are valid in this subset of test data used in tests (see mstr context)
+            // Only 224 or 228 are valid in this subset of test data used (see mstr context)
             result.EstablishmentTypeId = 224; 
             result.LocalAuthorityId = 1;
 
