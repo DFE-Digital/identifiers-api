@@ -3,15 +3,15 @@ variable "environment" {
   type        = string
 }
 
-# variable "key_vault_access_ipv4" {
-#   description = "List of IPv4 Addresses that are permitted to access the Key Vault"
-#   type        = list(string)
-# }
+variable "key_vault_access_ipv4" {
+  description = "List of IPv4 Addresses that are permitted to access the Key Vault"
+  type        = list(string)
+}
 
-# variable "tfvars_filename" {
-#   description = "tfvars filename. This ensures that tfvars are kept up to date in Key Vault."
-#   type        = string
-# }
+variable "tfvars_filename" {
+  description = "tfvars filename. This ensures that tfvars are kept up to date in Key Vault."
+  type        = string
+}
 
 variable "project_name" {
   description = "Project name. Will be used along with `environment` as a prefix for all resources."
