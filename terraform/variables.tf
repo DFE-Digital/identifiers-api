@@ -112,6 +112,12 @@ variable "cdn_frontdoor_host_add_response_headers" {
   type        = list(map(string))
 }
 
+variable "enable_cdn_frontdoor_health_probe" {
+  description = "Enable CDN Front Door health probe"
+  type        = bool
+  default     = false
+}
+
 variable "enable_monitoring" {
   description = "Create an App Insights instance and notification group for the Container App"
   type        = bool
