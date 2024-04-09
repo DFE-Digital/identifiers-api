@@ -3,15 +3,15 @@ variable "environment" {
   type        = string
 }
 
-# variable "key_vault_access_ipv4" {
-#   description = "List of IPv4 Addresses that are permitted to access the Key Vault"
-#   type        = list(string)
-# }
+variable "key_vault_access_ipv4" {
+  description = "List of IPv4 Addresses that are permitted to access the Key Vault"
+  type        = list(string)
+}
 
-# variable "tfvars_filename" {
-#   description = "tfvars filename. This ensures that tfvars are kept up to date in Key Vault."
-#   type        = string
-# }
+variable "tfvars_filename" {
+  description = "tfvars filename. This ensures that tfvars are kept up to date in Key Vault."
+  type        = string
+}
 
 variable "project_name" {
   description = "Project name. Will be used along with `environment` as a prefix for all resources."
@@ -110,6 +110,12 @@ variable "cdn_frontdoor_enable_rate_limiting" {
 variable "cdn_frontdoor_host_add_response_headers" {
   description = "List of response headers to add at the CDN Front Door `[{ \"name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
   type        = list(map(string))
+}
+
+variable "enable_cdn_frontdoor_health_probe" {
+  description = "Enable CDN Front Door health probe"
+  type        = bool
+  default     = false
 }
 
 variable "enable_monitoring" {

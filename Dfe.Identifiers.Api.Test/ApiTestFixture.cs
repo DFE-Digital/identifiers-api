@@ -1,5 +1,5 @@
 ﻿using System.Net.Mime;
-using Dfe.Identifiers.Api.Context;
+using Dfe.Identifiers.Infrastructure.Context;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -9,20 +9,26 @@ namespace Dfe.Identifiers.Api.Test
 {
     public class ApiTestFixture : IDisposable
     {
-        private const string connectionString = "Server=localhost,1433;Database=ApiTests;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905";
+        private const string connectionStringKey = "ConnectionStrings:Default";
         private DbContextOptions<MstrContext> _dbContextOptions { get; init; }
 
         public ApiTestFixture()
         {
+            var builder = new ConfigurationBuilder()
+                .AddUserSecrets<ApiTestFixture>();
+
+            Configuration = builder.Build();
             _dbContextOptions = new DbContextOptionsBuilder<MstrContext>()
-                .UseSqlServer(connectionString)
+                .UseSqlServer(Configuration[connectionStringKey])
                 .Options;
             using var context = GetMstrContext();
             context.Database.EnsureDeleted();
             context.Database.Migrate();
         }
 
-        public MstrContext GetMstrContext() => new MstrContext(_dbContextOptions);
+        private IConfigurationRoot Configuration { get; init; }
+
+        public MstrContext GetMstrContext() => new(_dbContextOptions);
 
         public void Dispose()
         {

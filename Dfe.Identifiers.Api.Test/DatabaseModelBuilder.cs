@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using Dfe.Identifiers.Api.Models;
+using Dfe.Identifiers.Domain.Models;
 
 namespace Dfe.Identifiers.Api.Test
 {
@@ -17,9 +17,6 @@ namespace Dfe.Identifiers.Api.Test
             result.TrustStatusId = null;
             result.RegionId = null;
             result.TrustBandingId = null;
-            result.CurrentSingleListGrouping = result.CurrentSingleListGrouping.Substring(0, 19);
-            result.FollowUpLetterSent = result.CurrentSingleListGrouping.Substring(0, 19);
-            result.PrioritisedForReview = result.PrioritisedForReview.Substring(0, 19);
             result.RID = result.RID.Substring(0, 10);
 
             return result;
@@ -29,21 +26,12 @@ namespace Dfe.Identifiers.Api.Test
         {
             var result = _fixture.Create<Establishment>();
             result.SK = null;
-            result.IfdPipeline = null;
             result.LocalAuthority = null;
             result.EstablishmentType = null;
             result.PK_GIAS_URN = _fixture.Create<int>().ToString();
-            result.EstablishmentTypeId = 228;
+            // Only 224 or 228 are valid in this subset of test data used (see mstr context)
+            result.EstablishmentTypeId = 224; 
             result.LocalAuthorityId = 1;
-
-            return result;
-        }
-
-        public static IfdPipeline BuildIfdPipeline()
-        {
-            var result = _fixture.Create<IfdPipeline>();
-            result.SK = null;
-            result.GeneralDetailsUrn = _fixture.Create<int>().ToString();
 
             return result;
         }

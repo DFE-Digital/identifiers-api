@@ -1,4 +1,4 @@
-﻿namespace Dfe.Identifiers.Api.Models.Identifiers;
+﻿namespace Dfe.Identifiers.Domain.Identifiers;
 
 public record EstablishmentIdentifiers(
     string? LAESTAB,

@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Dfe.Identifiers.Api.Migrations
+namespace Dfe.Identifiers.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,24 +29,6 @@ namespace Dfe.Identifiers.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EducationEstablishmentTrust", x => x.SK);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IfdPipeline",
-                schema: "mstr",
-                columns: table => new
-                {
-                    SK = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GeneralDetailsURN = table.Column<string>(name: "General Details.URN", type: "nvarchar(max)", nullable: true),
-                    DeliveryProcessPFI = table.Column<string>(name: "Delivery Process.PFI", type: "nvarchar(max)", nullable: true),
-                    DeliveryProcessPAN = table.Column<string>(name: "Delivery Process.PAN", type: "nvarchar(max)", nullable: true),
-                    ProjecttemplateinformationDeficit = table.Column<string>(name: "Project template information.Deficit?", type: "nvarchar(max)", nullable: true),
-                    ProjecttemplateinformationViabilityissue = table.Column<string>(name: "Project template information.Viability issue?", type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IfdPipeline", x => x.SK);
                 });
 
             migrationBuilder.CreateTable(
@@ -326,10 +308,6 @@ namespace Dfe.Identifiers.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "EducationEstablishmentTrust",
-                schema: "mstr");
-
-            migrationBuilder.DropTable(
-                name: "IfdPipeline",
                 schema: "mstr");
 
             migrationBuilder.DropTable(

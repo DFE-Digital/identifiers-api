@@ -1,7 +1,8 @@
-﻿namespace Dfe.Identifiers.Api.Models
+﻿namespace Dfe.Identifiers.Domain.Models
 {
     public class EducationEstablishmentTrust
     {
+        // Primary Key
         public int SK { get; set; } 
 
         // Foreign keys

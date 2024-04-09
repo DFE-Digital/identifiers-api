@@ -1,6 +1,7 @@
-using Dfe.Identifiers.Api.Context;
 using Dfe.Identifiers.Api.Interfaces;
-using Dfe.Identifiers.Api.Repositories;
+using Dfe.Identifiers.Application;
+using Dfe.Identifiers.Infrastructure.Context;
+using Dfe.Identifiers.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,7 @@ void ConfigureServices(IServiceCollection services, IConfiguration config)
     services.AddSwaggerGen();
     services.AddScoped<ITrustRepository, TrustRepository>();
     services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
+    services.AddScoped<IIdentifiersQuery, IdentifiersQuery>();
     services.AddDbContext<MstrContext>(options =>
         options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 }

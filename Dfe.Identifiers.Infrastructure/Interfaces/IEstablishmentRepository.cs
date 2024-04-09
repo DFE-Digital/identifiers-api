@@ -1,4 +1,4 @@
-﻿using Dfe.Identifiers.Api.Models;
+﻿using Dfe.Identifiers.Domain.Models;
 
 namespace Dfe.Identifiers.Api.Interfaces;
 

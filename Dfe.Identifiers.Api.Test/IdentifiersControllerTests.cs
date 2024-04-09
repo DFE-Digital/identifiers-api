@@ -1,10 +1,11 @@
 using System.Net;
-using Dfe.Identifiers.Api.Context;
 using Dfe.Identifiers.Api.Controllers;
-using Dfe.Identifiers.Api.Models;
-using Dfe.Identifiers.Api.Models.Identifiers;
-using Dfe.Identifiers.Api.Repositories;
 using Dfe.Identifiers.Api.Test.Extensions;
+using Dfe.Identifiers.Application;
+using Dfe.Identifiers.Domain.Identifiers;
+using Dfe.Identifiers.Domain.Models;
+using Dfe.Identifiers.Infrastructure.Context;
+using Dfe.Identifiers.Infrastructure.Repositories;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,8 +25,8 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         Fixture = fixture;
         var logger = new Mock<ILogger<IdentifiersController>>();
         var context = fixture.GetMstrContext();
-        Sut = new IdentifiersController(new TrustRepository(context), logger.Object,
-            new EstablishmentRepository(context));
+        Sut = new IdentifiersController(logger.Object, new IdentifiersQuery(new TrustRepository(context),
+            new EstablishmentRepository(context)));
     }
 
     // TRUSTS
@@ -162,7 +163,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
 
         var trustData = CreateEstablishmentSet(context);
 
-        var selectedEstablishment = trustData.Establishments.First().Establishment;
+        var selectedEstablishment = trustData.Establishments.First();
         var identifier = idType switch
         {
             EstablishmentsIdTypes.URN => $"{selectedEstablishment.URN}",
@@ -194,7 +195,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
 
         var mixedData = CreateSameUKPRNDataSet(context);
 
-        var selectedEstablishment = mixedData.Establishments.First().Establishment;
+        var selectedEstablishment = mixedData.Establishments.First();
         var selectedTrust = mixedData.Trust;
 
         var cancellationToken = new CancellationToken();
@@ -291,15 +292,14 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         context.Add(trust);
         context.SaveChanges();
 
-        var establishments = new List<EstablishmentDataSet>();
+        var establishments = new List<Establishment>();
 
         for (var idx = 0; idx < 3; idx++)
         {
             var localAuthority = context.LocalAuthorities.First(la => la.SK % 3 == idx);
             var establishmentDataSet = CreateEstablishment(localAuthority);
 
-            context.Establishments.Add(establishmentDataSet.Establishment);
-            context.IfdPipelines.Add(establishmentDataSet.IfdPipeline);
+            context.Establishments.Add(establishmentDataSet);
 
             establishments.Add(establishmentDataSet);
         }
@@ -307,7 +307,7 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         context.SaveChanges();
 
         var trustToEstablishmentLinks =
-            LinkTrustToEstablishments(trust, establishments.Select(d => d.Establishment).ToList());
+            LinkTrustToEstablishments(trust, establishments);
 
         context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
 
@@ -345,20 +345,19 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         context.SaveChanges();
 
         //Establishment
-        var establishments = new List<EstablishmentDataSet>();
+        var establishments = new List<Establishment>();
 
-        var establishmentDataSet = CreateEstablishment(context.LocalAuthorities.First());
-        establishmentDataSet.Establishment.UKPRN = MixedSameUkprn;
+        var establishment = CreateEstablishment(context.LocalAuthorities.First());
+        establishment.UKPRN = MixedSameUkprn;
 
-        context.Establishments.Add(establishmentDataSet.Establishment);
-        context.IfdPipelines.Add(establishmentDataSet.IfdPipeline);
+        context.Establishments.Add(establishment);
 
-        establishments.Add(establishmentDataSet);
+        establishments.Add(establishment);
 
         context.SaveChanges();
 
         var trustToEstablishmentLinks =
-            LinkTrustToEstablishments(trust, establishments.Select(d => d.Establishment).ToList());
+            LinkTrustToEstablishments(trust, establishments);
 
         context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
 
@@ -369,15 +368,13 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
         return result;
     }
 
-    private static EstablishmentDataSet CreateEstablishment(LocalAuthority la)
+    private static Establishment CreateEstablishment(LocalAuthority la)
     {
         var establishment = DatabaseModelBuilder.BuildEstablishment();
-        var ifdPipeline = DatabaseModelBuilder.BuildIfdPipeline();
 
         establishment.LocalAuthority = la;
-        ifdPipeline.GeneralDetailsUrn = establishment.PK_GIAS_URN;
 
-        return new EstablishmentDataSet(Establishment: establishment, IfdPipeline: ifdPipeline);
+        return establishment;
     }
 
     private static void AssertTrustIdentifierResponse(TrustIdentifiers actual, Trust expected)
@@ -410,11 +407,6 @@ public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
 
     private record TrustDataSet(
         Trust Trust,
-        List<EstablishmentDataSet> Establishments
-    );
-
-    private record EstablishmentDataSet(
-        Establishment Establishment,
-        IfdPipeline IfdPipeline
+        List<Establishment> Establishments
     );
 }

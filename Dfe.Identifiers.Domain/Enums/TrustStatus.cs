@@ -1,4 +1,4 @@
-﻿namespace Dfe.Identifiers.Api.Models;
+﻿namespace Dfe.Identifiers.Domain.Enums;
 
 public enum TrustStatus
 {
