@@ -1,0 +1,31 @@
+{
+  "name": "dfe.identifiers.api.cypresstests",
+  "version": "1.0.0",
+  "description": "Acceptance tests for the Identifiers API",
+  "main": "index.js",
+  "scripts": {
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "cypress",
+    "testing",
+    "regression"
+  ],
+  "contributors": [
+    "Chris Sherlock"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DFE-Digital/identifiers-api/issues"
+  },
+  "homepage": "https://github.com/DFE-Digital/identifiers-api#readme",
+  "devDependencies": {
+    "cypress": "^13.7.1",
+    "cypress-plugin-api": "^2.11.1",
+    "eslint": "^9.0.0",
+    "eslint-plugin-cypress": "^2.15.1",
+    "zaproxy": "^2.0.0-rc.4"
+  }
+}
