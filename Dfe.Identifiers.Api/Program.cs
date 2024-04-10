@@ -1,13 +1,11 @@
-using Dfe.Identifiers.Api.Interfaces;
-using Dfe.Identifiers.Application;
-using Dfe.Identifiers.Infrastructure.Context;
-using Dfe.Identifiers.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Dfe.Identifiers.Api;
+using Dfe.Identifiers.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-ConfigureServices(builder.Services, builder.Configuration);
+var startup = new Startup(builder.Configuration);
+
+startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
@@ -20,20 +18,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<ApiKeyMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
 
-void ConfigureServices(IServiceCollection services, IConfiguration config)
-{
-    services.AddControllers();
-    services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
-    services.AddScoped<ITrustRepository, TrustRepository>();
-    services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
-    services.AddScoped<IIdentifiersQuery, IdentifiersQuery>();
-    services.AddDbContext<MstrContext>(options =>
-        options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
-}
