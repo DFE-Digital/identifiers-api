@@ -5,7 +5,7 @@ namespace Dfe.Identifiers.Api.Test
 {
     public static class DatabaseModelBuilder
     {
-        private static readonly Fixture _fixture = new Fixture();
+        private static readonly Fixture _fixture = new();
 
         public static Trust BuildTrust()
         {
