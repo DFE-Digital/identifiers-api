@@ -3,6 +3,7 @@ using Dfe.Identifiers.Api.Services;
 using Dfe.Identifiers.Application;
 using Dfe.Identifiers.Domain.Authentication;
 using Dfe.Identifiers.Infrastructure.Context;
+using Dfe.Identifiers.Infrastructure.Interfaces;
 using Dfe.Identifiers.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

@@ -1,7 +1,7 @@
-﻿using Dfe.Identifiers.Api.Interfaces;
-using Dfe.Identifiers.Domain.Models;
+﻿using Dfe.Identifiers.Domain.Models;
 using Dfe.Identifiers.Domain.Query;
 using Dfe.Identifiers.Infrastructure.Context;
+using Dfe.Identifiers.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using static Dfe.Identifiers.Domain.Helpers.QueryMapping;
 
