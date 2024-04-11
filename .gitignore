@@ -147,11 +147,11 @@ _NCrunch*
 */Migrations/LegacyTramsDb
 
 # node_modules
-CypressTests/node_modules
+Dfe.Identifiers.Api.CypressTests/node_modules
 
 # screenshots and videos
-CypressTests/cypress/screenshots
-CypressTests/cypress/videos
+Dfe.Identifiers.Api.CypressTests/cypress/screenshots
+Dfe.Identifiers.Api.CypressTests/cypress/videos
 
 # ZAP
 .ZAP
@@ -168,6 +168,7 @@ Brewfile.lock.json
 .env.*.local
 !.env.development.local.example
 !.env.database.example
+cypress.env.json
 
 # secret files
 .secret.*
@@ -180,8 +181,3 @@ terraform.rc*
 !terraform.tfvars.example
 .terraform/
 backend.vars
-
-# Cypress
-
-node_modules/
-cypress.env.json
