@@ -4,8 +4,14 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    command: /bin/bash -c "./docker-entrypoint.sh dotnet DfE.IdentifiersApi.dll"
+    command: /bin/bash -c "./docker-entrypoint.sh dotnet Dfe.Identifiers.Api.dll"
     ports:
       - 80:80/tcp
     env_file:
       - .env
+  db:
+    image: ghcr.io/dfe-digital/trams-development-database:latest
+    ports:
+      - 1433:1433
+    env_file:
+      - .env.database

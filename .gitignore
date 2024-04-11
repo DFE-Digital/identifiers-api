@@ -168,6 +168,7 @@ Brewfile.lock.json
 .env.*.local
 !.env.development.local.example
 !.env.database.example
+!.env.example
 cypress.env.json
 
 # secret files
