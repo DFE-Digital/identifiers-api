@@ -6,12 +6,13 @@ services:
       dockerfile: docker/Dockerfile
     command: /bin/bash -c "./docker-entrypoint.sh dotnet Dfe.Identifiers.Api.dll"
     ports:
-      - 80:80/tcp
+      - "80:80/tcp"
     env_file:
       - .env
   db:
-    image: ghcr.io/dfe-digital/trams-development-database:latest
+    image: mcr.microsoft.com/azure-sql-edge:latest
     ports:
-      - 1433:1433
+      - "1433:1433"
+    restart: always
     env_file:
       - .env.database
