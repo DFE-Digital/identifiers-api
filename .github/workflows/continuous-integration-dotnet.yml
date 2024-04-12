@@ -27,7 +27,6 @@ jobs:
         cd docker
         cp .env.database.example .env.database
         cp .env.example .env
-        source .env
         docker compose -f "docker-compose.yml" up -d --build db
 
     - name: Setup .NET
