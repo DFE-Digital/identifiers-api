@@ -11,16 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Dfe.Identifiers.Api.Test;
+namespace Dfe.Identifiers.Api.Test.Api;
 
-public class IdentifiersControllerTests : IClassFixture<ApiTestFixture>
+public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
 {
     private ApiTestFixture Fixture { get; }
     private IdentifiersController Sut { get; }
 
     private const string MixedSameUkprn = "SameUKPRN";
 
-    public IdentifiersControllerTests(ApiTestFixture fixture)
+    public IdentifiersEndpointTests(ApiTestFixture fixture)
     {
         Fixture = fixture;
         var logger = new Mock<ILogger<IdentifiersController>>();

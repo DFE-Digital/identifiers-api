@@ -87,11 +87,6 @@ public class MstrContext : DbContext
             .IsRequired(false);
     }
 
-    /// <summary>
-    /// New mapping for refactoring
-    /// </summary>
-    /// <param name="trustConfiguration"></param>
-
     void ConfigureTrust(EntityTypeBuilder<Trust> trustConfiguration)
     {
         trustConfiguration.HasKey(e => e.SK);

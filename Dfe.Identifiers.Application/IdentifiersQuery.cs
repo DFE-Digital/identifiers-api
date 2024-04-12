@@ -1,5 +1,5 @@
-﻿using Dfe.Identifiers.Api.Interfaces;
-using Dfe.Identifiers.Domain.Identifiers;
+﻿using Dfe.Identifiers.Domain.Identifiers;
+using Dfe.Identifiers.Infrastructure.Interfaces;
 using static Dfe.Identifiers.Domain.Helpers.IdentifierMapping;
 
 namespace Dfe.Identifiers.Application;
