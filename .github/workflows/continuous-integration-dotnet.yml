@@ -11,7 +11,7 @@ on:
 env:
   DOTNET_VERSION: '6.0.403'
   JAVA_VERSION: '17'
-  CONNECTION_STRING: "Server=db,1433;Database=sip;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905"
+  CONNECTION_STRING: "Server=localhost,1433;Database=sip;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905"
 
 jobs:
   build-and-test:
