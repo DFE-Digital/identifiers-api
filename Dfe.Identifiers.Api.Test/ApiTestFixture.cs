@@ -15,6 +15,8 @@ namespace Dfe.Identifiers.Api.Test
         public ApiTestFixture()
         {
             var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
                 .AddUserSecrets<ApiTestFixture>();
 
             Configuration = builder.Build();
