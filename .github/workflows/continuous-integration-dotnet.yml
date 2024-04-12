@@ -11,6 +11,7 @@ on:
 env:
   DOTNET_VERSION: '6.0.403'
   JAVA_VERSION: '17'
+  CONNECTION_STRING: 'Server=localhost,1433;Database=sip;TrustServerCertificate=True;User Id=sa;Password=Your_password123'
 
 jobs:
   build-and-test:
@@ -20,6 +21,13 @@ jobs:
       with:
         ref: ${{ github.ref }}
         fetch-depth: 0 # Shallow clones disabled for a better relevancy of SC analysis
+        
+    - name: Setup services
+      run: |
+        cd docker
+        cp .env.database.example .env.database
+        cp .env.example .env.development
+        docker compose -f "docker-compose-ci.yml" up -d --build db
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
