@@ -11,6 +11,7 @@ on:
 env:
   DOTNET_VERSION: '6.0.403'
   JAVA_VERSION: '17'
+  CONNECTION_STRING: "Server=localhost,1433;Database=sip;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905"
 
 jobs:
   build-and-test:
@@ -20,6 +21,13 @@ jobs:
       with:
         ref: ${{ github.ref }}
         fetch-depth: 0 # Shallow clones disabled for a better relevancy of SC analysis
+        
+    - name: Setup services
+      run: |
+        cd docker
+        cp .env.database.example .env.database
+        cp .env.example .env
+        docker compose -f "docker-compose.yml" up -d --build db
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -69,11 +77,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         ConnectionStrings__DefaultConnection: ${{ env.CONNECTION_STRING }}
       run: |
-        dotnet-sonarscanner begin /k:"DFE-Digital_identifiers-api" /o:"dfe-digital" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet-sonarscanner begin /k:"DFE-Digital_identifiers-api" /o:"dfe-digital" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.coverageReportPaths=CoverageReport/SonarQube.xml
         dotnet build --no-restore
-        dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
         dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
-
-# Todo add this back to previous step once tests in place
-#  /d:sonar.coverageReportPaths=CoverageReport/SonarQube.xml
-# reportgenerator -reports:./**/coverage.cobertura.xml -targetdir:./CoverageReport -reporttypes:SonarQube
+        reportgenerator -reports:./**/coverage.cobertura.xml -targetdir:./CoverageReport -reporttypes:SonarQube
+        dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

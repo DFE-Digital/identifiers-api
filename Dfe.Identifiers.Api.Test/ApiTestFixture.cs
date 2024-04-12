@@ -1,7 +1,4 @@
-﻿using System.Net.Mime;
-using Dfe.Identifiers.Infrastructure.Context;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Data.SqlClient;
+﻿using Dfe.Identifiers.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -9,12 +6,14 @@ namespace Dfe.Identifiers.Api.Test
 {
     public class ApiTestFixture : IDisposable
     {
-        private const string connectionStringKey = "ConnectionStrings:Default";
+        private const string connectionStringKey = "ConnectionStrings:DefaultConnection";
         private DbContextOptions<MstrContext> _dbContextOptions { get; init; }
 
         public ApiTestFixture()
         {
             var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
                 .AddUserSecrets<ApiTestFixture>();
 
             Configuration = builder.Build();
