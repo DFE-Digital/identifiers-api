@@ -214,6 +214,22 @@ variable "dns_txt_records" {
   )
 }
 
+variable "dns_mx_records" {
+  description = "DNS MX records to add to the DNS Zone"
+  type = map(
+    object({
+      ttl : optional(number, 300),
+      records : list(
+        object({
+          preference : number,
+          exchange : string
+        })
+      )
+    })
+  )
+  default = {}
+}
+
 variable "enable_container_health_probe" {
   description = "Enable liveness probes for the Container"
   type        = bool
