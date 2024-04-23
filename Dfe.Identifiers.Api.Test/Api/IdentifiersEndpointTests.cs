@@ -1,6 +1,8 @@
 using System.Net;
 using Dfe.Identifiers.Api.Controllers;
+using Dfe.Identifiers.Api.Test.Constants;
 using Dfe.Identifiers.Api.Test.Extensions;
+using Dfe.Identifiers.Api.Test.Helpers;
 using Dfe.Identifiers.Application;
 using Dfe.Identifiers.Domain.Identifiers;
 using Dfe.Identifiers.Domain.Models;
@@ -18,15 +20,14 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     private ApiTestFixture Fixture { get; }
     private IdentifiersController Sut { get; }
 
-    private const string MixedSameUkprn = "SameUKPRN";
-
     public IdentifiersEndpointTests(ApiTestFixture fixture)
     {
         Fixture = fixture;
         var logger = new Mock<ILogger<IdentifiersController>>();
-        var context = fixture.GetMstrContext();
-        Sut = new IdentifiersController(logger.Object, new IdentifiersQuery(new TrustRepository(context),
-            new EstablishmentRepository(context)));
+        var mstrContext = fixture.GetMstrContext();
+        var academistationContext = fixture.GetAcademisationContext();
+        Sut = new IdentifiersController(logger.Object, new IdentifiersQuery(new TrustRepository(mstrContext),
+            new EstablishmentRepository(mstrContext), new ProjectsRepository(academistationContext)));
     }
 
     // TRUSTS
@@ -39,7 +40,7 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        var trustData = await BuildTrustSet(context);
+        var trustData = await DatabaseModelBuilder.BuildTrustSet(context);
 
         var selectedTrust = trustData.First();
 
@@ -73,7 +74,7 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        var trustData = await BuildDuplicateTrustSet(context, trustIdType);
+        var trustData = await DatabaseModelBuilder.CreateDuplicateTrustSet(context, trustIdType);
 
         var identifier = trustIdType switch
         {
@@ -107,7 +108,7 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        var trustData = await BuildTrustSetWithEmptyData(context, trustIdType);
+        var trustData = await DatabaseModelBuilder.CreateTrustSetWithEmptyData(context, trustIdType);
         var selectedTrust = trustData.First();
         var identifier = trustIdType switch
         {
@@ -136,7 +137,7 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        await BuildTrustSet(context);
+        await DatabaseModelBuilder.BuildTrustSet(context);
 
         var cancellationToken = new CancellationToken();
         var response = await Sut.GetIdentifiers("NoTrustExists", cancellationToken);
@@ -161,7 +162,7 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        var trustData = CreateEstablishmentSet(context);
+        var trustData = DatabaseModelBuilder.CreateEstablishmentSet(context);
 
         var selectedEstablishment = trustData.Establishments.First();
         var identifier = idType switch
@@ -193,13 +194,13 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
     {
         using var context = Fixture.GetMstrContext();
 
-        var mixedData = CreateSameUKPRNDataSet(context);
+        var mixedData = DatabaseModelBuilder.CreateSameUKPRNDataSet(context);
 
         var selectedEstablishment = mixedData.Establishments.First();
         var selectedTrust = mixedData.Trust;
 
         var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(MixedSameUkprn, cancellationToken);
+        var response = await Sut.GetIdentifiers(IdentifierConstants.MixedSameUkprn, cancellationToken);
 
         response.Result.Should().NotBeNull();
         response.Result.Should().BeOfType(typeof(OkObjectResult));
@@ -215,166 +216,94 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
         AssertTrustIdentifierResponse(trusts.First(), selectedTrust);
     }
 
-    private static async Task<List<Trust>> BuildTrustSet(MstrContext context)
+    // PROJECTS
+    
+    [Theory]
+    [InlineData(ConversionProjectIdTypes.ApplicationReferenceNumber)]
+    [InlineData(ConversionProjectIdTypes.SponsorReferenceNumber)]
+    [InlineData(ConversionProjectIdTypes.TrustReferenceNumber)]
+    public async Task Get_ConversionProjectIdentifier_AndProjectExistsExists_Returns_Ok(ConversionProjectIdTypes idType)
     {
-        var trusts = new List<Trust>();
+        using var context = Fixture.GetAcademisationContext();
 
-        for (var idx = 0; idx < 3; idx++)
+        var projectData = await DatabaseModelBuilder.CreateConversionProjectsSet(context);
+
+        var selectedProject = projectData.First();
+        var identifier = idType switch
         {
-            var trust = DatabaseModelBuilder.BuildTrust();
-            trusts.Add(trust);
-        }
+            ConversionProjectIdTypes.ApplicationReferenceNumber => selectedProject.ApplicationReferenceNumber,
+            ConversionProjectIdTypes.SponsorReferenceNumber => selectedProject.SponsorReferenceNumber,
+            ConversionProjectIdTypes.TrustReferenceNumber => selectedProject.TrustReferenceNumber,
+            _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
+        };
 
-        context.Trusts.AddRange(trusts);
-        await context.SaveChangesAsync();
-        return trusts;
+        var cancellationToken = new CancellationToken();
+        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+
+        response.Result.Should().NotBeNull();
+        response.Result.Should().BeOfType(typeof(OkObjectResult));
+        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
+
+        var content = response.GetIdentifiers();
+        content.Should().NotBeNull();
+        var conversionProjects = content!.ConversionProjects;
+        conversionProjects.Length.Should().Be(1);
+        AssertConversionProjectIdentifierResponse(conversionProjects.First(), selectedProject);
     }
-
-    private static async Task<List<Trust>> BuildDuplicateTrustSet(MstrContext context, TrustIdTypes trustId)
+    
+    [Fact]
+    public async Task Get_TransferProjectIdentifier_AndProjectExistsExists_Returns_Ok()
     {
-        var trusts = new List<Trust>();
+        using var context = Fixture.GetAcademisationContext();
 
-        for (var idx = 0; idx < 3; idx++)
+        var projectData = await DatabaseModelBuilder.CreateTransferProjectsSet(context);
+
+        var selectedProject = projectData.First();
+        var identifier = selectedProject.ProjectReference;
+
+        var cancellationToken = new CancellationToken();
+        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+
+        response.Result.Should().NotBeNull();
+        response.Result.Should().BeOfType(typeof(OkObjectResult));
+        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
+
+        var content = response.GetIdentifiers();
+        content.Should().NotBeNull();
+        var transferProjects = content!.TransferProjects;
+        transferProjects.Length.Should().Be(1);
+        AssertTransferProjectIdentifierResponse(transferProjects.First(), selectedProject);
+    }
+    
+    [Theory]
+    [InlineData(FormAMatProjectIdTypes.ApplicationReference)]
+    [InlineData(FormAMatProjectIdTypes.ReferenceNumber)]
+    public async Task Get_FormAMatProjectIdentifier_AndProjectExistsExists_Returns_Ok(FormAMatProjectIdTypes idType)
+    {
+        using var context = Fixture.GetAcademisationContext();
+
+        var projectData = await DatabaseModelBuilder.CreateFormAMatProjectsSet(context);
+
+        var selectedProject = projectData.First();
+        var identifier = idType switch
         {
-            var trust = DatabaseModelBuilder.BuildTrust();
-            switch (trustId)
-            {
-                case TrustIdTypes.GroupID:
-                    trust.GroupID = "GroupID";
-                    break;
-                case TrustIdTypes.UKPRN:
-                    trust.UKPRN = "UKPRN";
-                    break;
-                case TrustIdTypes.GroupUID:
-                    trust.GroupUID = "GroupUID";
-                    break;
-            }
+            FormAMatProjectIdTypes.ApplicationReference => selectedProject.ApplicationReference,
+            FormAMatProjectIdTypes.ReferenceNumber => selectedProject.ReferenceNumber,
+            _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
+        };
 
-            trusts.Add(trust);
-        }
+        var cancellationToken = new CancellationToken();
+        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
 
-        context.Trusts.AddRange(trusts);
-        await context.SaveChangesAsync();
-        return trusts;
-    }
+        response.Result.Should().NotBeNull();
+        response.Result.Should().BeOfType(typeof(OkObjectResult));
+        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
 
-    private static async Task<List<Trust>> BuildTrustSetWithEmptyData(MstrContext context,
-        TrustIdTypes trustIdTypeToKeep)
-    {
-        var trusts = await BuildTrustSet(context);
-        foreach (var trust in trusts)
-        {
-            switch (trustIdTypeToKeep)
-            {
-                case TrustIdTypes.GroupID:
-                    trust.UKPRN = null;
-                    break;
-                case TrustIdTypes.UKPRN:
-                    trust.GroupID = null;
-                    break;
-                case TrustIdTypes.GroupUID:
-                    trust.GroupID = null;
-                    trust.UKPRN = null;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(trustIdTypeToKeep), trustIdTypeToKeep, null);
-            }
-        }
-
-        context.Trusts.UpdateRange(trusts);
-        await context.SaveChangesAsync();
-        return trusts;
-    }
-
-    private static TrustDataSet CreateEstablishmentSet(MstrContext context)
-    {
-        var trust = DatabaseModelBuilder.BuildTrust();
-        context.Add(trust);
-        context.SaveChanges();
-
-        var establishments = new List<Establishment>();
-
-        for (var idx = 0; idx < 3; idx++)
-        {
-            var localAuthority = context.LocalAuthorities.First(la => la.SK % 3 == idx);
-            var establishmentDataSet = CreateEstablishment(localAuthority);
-
-            context.Establishments.Add(establishmentDataSet);
-
-            establishments.Add(establishmentDataSet);
-        }
-
-        context.SaveChanges();
-
-        var trustToEstablishmentLinks =
-            LinkTrustToEstablishments(trust, establishments);
-
-        context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
-
-        context.SaveChanges();
-
-        var result = new TrustDataSet(Trust: trust, Establishments: establishments);
-
-        return result;
-    }
-
-    private static List<EducationEstablishmentTrust> LinkTrustToEstablishments(Trust trust,
-        List<Establishment> establishments)
-    {
-        var result = new List<EducationEstablishmentTrust>();
-
-        establishments.ForEach(establishment =>
-        {
-            var educationEstablishmentTrust = new EducationEstablishmentTrust()
-            {
-                TrustId = (int)trust.SK,
-                EducationEstablishmentId = (int)establishment.SK
-            };
-
-            result.Add(educationEstablishmentTrust);
-        });
-
-        return result;
-    }
-
-    private static TrustDataSet CreateSameUKPRNDataSet(MstrContext context)
-    {
-        var trust = DatabaseModelBuilder.BuildTrust();
-        trust.UKPRN = MixedSameUkprn;
-        context.Add(trust);
-        context.SaveChanges();
-
-        //Establishment
-        var establishments = new List<Establishment>();
-
-        var establishment = CreateEstablishment(context.LocalAuthorities.First());
-        establishment.UKPRN = MixedSameUkprn;
-
-        context.Establishments.Add(establishment);
-
-        establishments.Add(establishment);
-
-        context.SaveChanges();
-
-        var trustToEstablishmentLinks =
-            LinkTrustToEstablishments(trust, establishments);
-
-        context.EducationEstablishmentTrusts.AddRange(trustToEstablishmentLinks);
-
-        context.SaveChanges();
-
-        var result = new TrustDataSet(Trust: trust, Establishments: establishments);
-
-        return result;
-    }
-
-    private static Establishment CreateEstablishment(LocalAuthority la)
-    {
-        var establishment = DatabaseModelBuilder.BuildEstablishment();
-
-        establishment.LocalAuthority = la;
-
-        return establishment;
+        var content = response.GetIdentifiers();
+        content.Should().NotBeNull();
+        var formAMatProjects = content!.FormAMatProjects;
+        formAMatProjects.Length.Should().Be(1);
+        AssertFormAMatProjectIdentifierResponse(formAMatProjects.First(), selectedProject);
     }
 
     private static void AssertTrustIdentifierResponse(TrustIdentifiers actual, Trust expected)
@@ -390,23 +319,22 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
         actual.UKPRN.Should().Be(expected.UKPRN);
         actual.LAESTAB.Should().Be($"{expected.LocalAuthority.Code}/{expected.EstablishmentNumber}");
     }
-
-    public enum TrustIdTypes
+    
+    private static void AssertConversionProjectIdentifierResponse(ConversionProjectIdentifiers actual, ConversionProject expected)
     {
-        GroupID,
-        UKPRN,
-        GroupUID
+        actual.ApplicationReferenceNumber.Should().Be(expected.ApplicationReferenceNumber);
+        actual.SponsorReferenceNumber.Should().Be(expected.SponsorReferenceNumber);
+        actual.TrustReferenceNumber.Should().Be(expected.TrustReferenceNumber);
     }
-
-    public enum EstablishmentsIdTypes
+    
+    private static void AssertTransferProjectIdentifierResponse(TransferProjectIdentifiers actual, TransferProject expected)
     {
-        URN,
-        UKPRN,
-        LAESTAB
+        actual.ProjectReference.Should().Be(expected.ProjectReference);
     }
-
-    private record TrustDataSet(
-        Trust Trust,
-        List<Establishment> Establishments
-    );
+    
+    private static void AssertFormAMatProjectIdentifierResponse(FormAMatProjectIdentifiers actual, FormAMatProject expected)
+    {
+        actual.ApplicationReference.Should().Be(expected.ApplicationReference);
+        actual.ReferenceNumber.Should().Be(expected.ReferenceNumber);
+    }
 }
