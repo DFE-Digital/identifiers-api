@@ -63,8 +63,6 @@ public class MstrContext : DbContext
         establishmentConfiguration.Property(e => e.LocalAuthorityId).HasColumnName("FK_LocalAuthority");
         establishmentConfiguration.Property(e => e.RegionId).HasColumnName("FK_Region");
         establishmentConfiguration.Property(e => e.GORregion).HasColumnName("GORregion");
-        establishmentConfiguration.Property(e => e.Modified).HasColumnName("Modified");
-        establishmentConfiguration.Property(e => e.ModifiedBy).HasColumnName("Modified By");
         establishmentConfiguration.Property(e => e.PK_CDM_ID).HasColumnName("PK_CDM_ID");
         establishmentConfiguration.Property(e => e.PK_GIAS_URN).HasColumnName("PK_GIAS_URN").HasConversion<int?>();
         establishmentConfiguration.Property(e => e.UKPRN).HasColumnName("UKPRN");
@@ -103,8 +101,6 @@ public class MstrContext : DbContext
         trustConfiguration.Property(e => e.Name).HasColumnName("Name").IsRequired();
         trustConfiguration.Property(e => e.CompaniesHouseNumber).HasColumnName("Companies House Number");
         trustConfiguration.Property(e => e.TrustStatus).HasColumnName("Trust Status");
-        trustConfiguration.Property(e => e.Modified).HasColumnName("Modified");
-        trustConfiguration.Property(e => e.ModifiedBy).HasColumnName("Modified By");
         trustConfiguration.Property(e => e.UKPRN).HasColumnName("UKPRN");
         trustConfiguration.Property(e => e.UPIN).HasColumnName("UPIN");
 
