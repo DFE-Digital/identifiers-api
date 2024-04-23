@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
 {
     [DbContext(typeof(AcademisationContext))]
-    [Migration("20240422140157_InitialCreate")]
+    [Migration("20240423142452_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -27,18 +27,18 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
 
             modelBuilder.Entity("Dfe.Identifiers.Domain.Models.ConversionProject", b =>
                 {
-                    b.Property<long?>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("ApplicationReferenceNumber")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ApplicationReferenceNumber");
 
-                    b.Property<long?>("FormAMatProjectId")
-                        .HasColumnType("bigint")
+                    b.Property<int?>("FormAMatProjectId")
+                        .HasColumnType("int")
                         .HasColumnName("FormAMatProjectId");
 
                     b.Property<string>("SchoolName")
@@ -53,8 +53,8 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("TrustReferenceNumber");
 
-                    b.Property<long>("URN")
-                        .HasColumnType("bigint")
+                    b.Property<int>("URN")
+                        .HasColumnType("int")
                         .HasColumnName("Urn");
 
                     b.HasKey("Id");
@@ -66,11 +66,11 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
 
             modelBuilder.Entity("Dfe.Identifiers.Domain.Models.FormAMatProject", b =>
                 {
-                    b.Property<long?>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long?>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<string>("ApplicationReference")
                         .HasColumnType("nvarchar(max)")
@@ -87,11 +87,11 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
 
             modelBuilder.Entity("Dfe.Identifiers.Domain.Models.TransferProject", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("Id"));
 
                     b.Property<long?>("OutgoingTrustUKPRN")
                         .HasColumnType("bigint")
@@ -101,8 +101,8 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ProjectReference");
 
-                    b.Property<long>("URN")
-                        .HasColumnType("bigint")
+                    b.Property<int>("URN")
+                        .HasColumnType("int")
                         .HasColumnName("Urn");
 
                     b.HasKey("Id");

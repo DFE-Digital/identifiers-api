@@ -18,7 +18,7 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
                 schema: "academisation",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -33,9 +33,9 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
                 schema: "academisation",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Urn = table.Column<long>(type: "bigint", nullable: false),
+                    Urn = table.Column<int>(type: "int", nullable: false),
                     ProjectReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OutgoingTrustUkprn = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -49,14 +49,14 @@ namespace Dfe.Identifiers.Infrastructure.Migrations.Academisation
                 schema: "academisation",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Urn = table.Column<long>(type: "bigint", nullable: false),
+                    Urn = table.Column<int>(type: "int", nullable: false),
                     SchoolName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ApplicationReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrustReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SponsorReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    FormAMatProjectId = table.Column<long>(type: "bigint", nullable: true)
+                    FormAMatProjectId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
