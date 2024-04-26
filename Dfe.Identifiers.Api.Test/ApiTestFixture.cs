@@ -44,11 +44,9 @@ namespace Dfe.Identifiers.Api.Test
                     
                     _mstrContextOptions = new DbContextOptionsBuilder<MstrContext>()
                         .UseSqlServer(connectionString)
-                        .EnableSensitiveDataLogging()
                         .Options;
                     _academisationContextOptions = new DbContextOptionsBuilder<AcademisationContext>()
                         .UseSqlServer(connectionString)
-                        .EnableSensitiveDataLogging()
                         .Options;
                 }
                 SetupDatabase();
