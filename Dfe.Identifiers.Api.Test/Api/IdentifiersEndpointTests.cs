@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using Dfe.Identifiers.Api.Controllers;
 using Dfe.Identifiers.Api.Test.Constants;
 using Dfe.Identifiers.Api.Test.Extensions;
@@ -18,16 +19,14 @@ namespace Dfe.Identifiers.Api.Test.Api;
 public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
 {
     private ApiTestFixture Fixture { get; }
-    private IdentifiersController Sut { get; }
+    
+    private readonly HttpClient _client;
 
+    private const string ApiUrlPrefix = "/api/identifier";
     public IdentifiersEndpointTests(ApiTestFixture fixture)
     {
         Fixture = fixture;
-        var logger = new Mock<ILogger<IdentifiersController>>();
-        var mstrContext = fixture.GetMstrContext();
-        var academistationContext = fixture.GetAcademisationContext();
-        Sut = new IdentifiersController(logger.Object, new IdentifiersQuery(new TrustRepository(mstrContext),
-            new EstablishmentRepository(mstrContext), new ProjectsRepository(academistationContext)));
+        _client = fixture.Client;
     }
 
     // TRUSTS
@@ -52,14 +51,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             _ => throw new ArgumentOutOfRangeException(nameof(trustIdType), trustIdType, null)
         };
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var trusts = content!.Trusts;
         trusts.Length.Should().Be(1);
@@ -84,14 +79,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             _ => throw new ArgumentOutOfRangeException(nameof(trustIdType), trustIdType, null)
         };
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var trusts = content!.Trusts;
         trusts.Length.Should().Be(3);
@@ -117,15 +108,11 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             TrustIdTypes.GroupUID => selectedTrust.GroupUID,
             _ => throw new ArgumentOutOfRangeException(nameof(trustIdType), trustIdType, null)
         };
+        
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
-
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var trusts = content!.Trusts;
         trusts.Length.Should().Be(1);
@@ -139,14 +126,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
 
         await DatabaseModelBuilder.BuildTrustSet(context);
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers("NoTrustExists", cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/noIdentifier");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var trusts = content!.Trusts;
         trusts.Length.Should().Be(0);
@@ -174,14 +157,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
         };
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var establishments = content!.Establishments;
         establishments.Length.Should().Be(1);
@@ -199,14 +178,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
         var selectedEstablishment = mixedData.Establishments.First();
         var selectedTrust = mixedData.Trust;
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(IdentifierConstants.MixedSameUkprn, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{IdentifierConstants.MixedSameUkprn}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var establishments = content!.Establishments;
         establishments.Length.Should().Be(1);
@@ -237,14 +212,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
         };
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var conversionProjects = content!.ConversionProjects;
         conversionProjects.Length.Should().Be(1);
@@ -261,14 +232,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
         var selectedProject = projectData.First();
         var identifier = selectedProject.ProjectReference;
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var transferProjects = content!.TransferProjects;
         transferProjects.Length.Should().Be(1);
@@ -292,14 +259,10 @@ public class IdentifiersEndpointTests : IClassFixture<ApiTestFixture>
             _ => throw new ArgumentOutOfRangeException(nameof(idType), idType, null)
         };
 
-        var cancellationToken = new CancellationToken();
-        var response = await Sut.GetIdentifiers(identifier!, cancellationToken);
+        var response = await _client.GetAsync($"{ApiUrlPrefix}/{identifier}");
 
-        response.Result.Should().NotBeNull();
-        response.Result.Should().BeOfType(typeof(OkObjectResult));
-        response.GetStatusCode().Should().Be((int)HttpStatusCode.OK);
-
-        var content = response.GetIdentifiers();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadFromJsonAsync<IdentifiersCollection>();
         content.Should().NotBeNull();
         var formAMatProjects = content!.FormAMatProjects;
         formAMatProjects.Length.Should().Be(1);
