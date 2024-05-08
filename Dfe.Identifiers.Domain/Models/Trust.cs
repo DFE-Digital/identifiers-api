@@ -14,8 +14,6 @@
         public string? Name { get; set; }
         public string? CompaniesHouseNumber { get; set; }
         public string? TrustStatus { get; set; }
-        public DateTime? Modified { get; set; }
-        public string? ModifiedBy { get; set; }
         public string? UKPRN { get; set; }
         public string? UPIN { get; set; }
         public TrustType? TrustType { get; set; }

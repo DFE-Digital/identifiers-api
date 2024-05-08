@@ -16,12 +16,7 @@
         public long? RegionId { get; set; }
         public int? EstablishmentNumber { get; set; }
         public string? EstablishmentName { get; set; }
-
-        public DateTime? Modified { get; set; }
-        public string? ModifiedBy { get; set; }
-
         public string? UKPRN { get; set; }
-
         public int? URNAtCurrentFullInspection { get; set; }
         public int? URNAtPreviousFullInspection { get; set; }
         public int? URNAtSection8Inspection { get; set; }

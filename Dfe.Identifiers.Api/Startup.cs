@@ -39,7 +39,10 @@ public class Startup(IConfiguration configuration)
         services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
         services.AddScoped<IIdentifiersQuery, IdentifiersQuery>();
         services.AddScoped<IApiKeyService, ApiKeyService>();
+        services.AddScoped<IProjectsRepository, ProjectsRepository>();
         services.AddDbContext<MstrContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(configuration.GetConnectionString("MstrConnection") ?? configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<AcademisationContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("AcademisationConnection") ?? configuration.GetConnectionString("DefaultConnection")));
     }
 }

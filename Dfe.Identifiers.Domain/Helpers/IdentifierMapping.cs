@@ -15,4 +15,20 @@ public static class IdentifierMapping
     {
         return new TrustIdentifiers(UID: trust.GroupUID, UKPRN: trust.UKPRN, TrustReference: trust.GroupID);
     }
+
+    public static ConversionProjectIdentifiers MapConversionProjectToIdentifiers(ConversionProject project)
+    {
+        return new ConversionProjectIdentifiers(ApplicationReferenceNumber: project.ApplicationReferenceNumber,
+            TrustReferenceNumber: project.TrustReferenceNumber, SponsorReferenceNumber: project.SponsorReferenceNumber);
+    }
+    
+    public static TransferProjectIdentifiers MapTransferProjectToIdentifiers(TransferProject project)
+    {
+        return new TransferProjectIdentifiers(ProjectReference: project.ProjectReference);
+    }
+    
+    public static FormAMatProjectIdentifiers MapFormAMatProjectToIdentifiers(FormAMatProject project)
+    {
+        return new FormAMatProjectIdentifiers(ReferenceNumber: project.ReferenceNumber, ApplicationReference: project.ApplicationReference);
+    }
 }
