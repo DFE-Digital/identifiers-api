@@ -49,6 +49,12 @@ variable "registry_admin_enabled" {
   default     = true
 }
 
+variable "registry_server" {
+  description = "Container registry server (required if `enable_container_registry` is false)"
+  type        = string
+  default     = ""
+}
+
 variable "registry_use_managed_identity" {
   description = "Create a User-Assigned Managed Identity for the Container App. Note: If you do not have 'Microsoft.Authorization/roleAssignments/write' permission, you will need to manually assign the 'AcrPull' Role to the identity"
   type        = bool
@@ -245,7 +251,7 @@ variable "cdn_frontdoor_health_probe_protocol" {
 variable "image_tag" {
   description = "Default image tag for the primary container"
   type        = string
-  default     = "web-latest"
+  default     = "latest"
 }
 
 variable "statuscake_api_token" {
