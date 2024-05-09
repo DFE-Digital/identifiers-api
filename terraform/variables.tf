@@ -284,3 +284,32 @@ variable "statuscake_contact_group_email_addresses" {
   type        = list(string)
   default     = []
 }
+
+variable "private_endpoint_configurations" {
+  description = <<EOT
+  Map of private endpoint configurations, specifying the VNet name/resource-group and a new subnet CIDR. A subnet, private endpoint and DNS zone will be created within the specified VNet.
+  {
+    endpoint-name = {
+      vnet_name: The Name of the VNet to create the private endpoint resources
+      vnet_resource_group_name: The Name of the resource group containing the VNet
+      subnet_cidr: The CIDR of the Private Endpoint subnet to be created
+      subresource_name: The type of resource you are targeting (e.g. sqlServer)
+      target_resource_id: The Resource ID for the target resource you are trying to connect to
+      create_private_dns_zone: Do you want to automatically create the Private DNS Zone?
+      private_dns_hostname: The hostname to use for the Private DNS Zone
+      subnet_route_table_name: The Route Table ID to associate the subnet with (Optional)
+    }
+  }
+  EOT
+  type = map(object({
+    vnet_name                = string
+    vnet_resource_group_name = string
+    subnet_cidr              = string
+    subresource_name         = string
+    target_resource_id       = string
+    create_private_dns_zone  = optional(bool, true)
+    private_dns_hostname     = string
+    subnet_route_table_name  = optional(string, null)
+  }))
+  default = {}
+}
