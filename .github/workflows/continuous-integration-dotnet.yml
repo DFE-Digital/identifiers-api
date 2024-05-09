@@ -4,9 +4,17 @@ on:
   push:
     branches:
     - main
+    paths:
+    - 'Dfe.Identifiers.*'
+    - '!Dfe.Identifiers.Api.CypressTests'
+    - '!*.csproj'
   pull_request:
     branches: [ main ]
     types: [ opened, synchronize, reopened ]
+    paths:
+    - 'Dfe.Identifiers.*'
+    - '!Dfe.Identifiers.Api.CypressTests'
+    - '!*.csproj'
 
 env:
   DOTNET_VERSION: '6.0.403'
