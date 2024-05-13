@@ -1,18 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
-using Dfe.Identifiers.Api.Controllers;
 using Dfe.Identifiers.Api.Test.Constants;
-using Dfe.Identifiers.Api.Test.Extensions;
 using Dfe.Identifiers.Api.Test.Helpers;
-using Dfe.Identifiers.Application;
 using Dfe.Identifiers.Domain.Identifiers;
 using Dfe.Identifiers.Domain.Models;
-using Dfe.Identifiers.Infrastructure.Context;
-using Dfe.Identifiers.Infrastructure.Repositories;
 using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace Dfe.Identifiers.Api.Test.Api;
 
