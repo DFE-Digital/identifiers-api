@@ -9,8 +9,8 @@ public class ApiKeyMiddleware(RequestDelegate next, ILogger<ApiKeyMiddleware> lo
 
     public async Task InvokeAsync(HttpContext context, IApiKeyService apiKeyService)
     {
-        // Only run API auth on API routes
-        if (!context.Request.Path.StartsWithSegments("/api"))
+        // Exclude the health endpoint from API key authentication
+        if (context.Request.Path.StartsWithSegments("/health"))
         {
             await next(context);
         }
