@@ -53,7 +53,7 @@ public class ApiKeyMiddlewareTests
     {
         using var server = await SetupTestServer();
         
-        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
 
         var context = await server.SendAsync(request);
 
@@ -67,7 +67,7 @@ public class ApiKeyMiddlewareTests
     {
         using var server = await SetupTestServer();
         
-        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
         request.Headers.Add(AuthenticationConstants.APIKEYNAME, "random key");
 
         var context = await server.SendAsync(request);
@@ -79,6 +79,21 @@ public class ApiKeyMiddlewareTests
     
     [Fact]
     public async Task Correct_ApiKey_Returns_NotFound()
+    {
+        using var server = await SetupTestServer();
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
+        request.Headers.Add(AuthenticationConstants.APIKEYNAME, validUser.ApiKey);
+        
+        var context = await server.SendAsync(request);
+
+        context.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var content = await context.Content.ReadAsStringAsync();
+        content.Should().Be("");
+    }
+    
+    [Fact]
+    public async Task No_ApiKey_without_ApiRoute_Returns_NotFound()
     {
         using var server = await SetupTestServer();
         
