@@ -9,25 +9,33 @@ public class ApiKeyMiddleware(RequestDelegate next, ILogger<ApiKeyMiddleware> lo
 
     public async Task InvokeAsync(HttpContext context, IApiKeyService apiKeyService)
     {
-        if (!context.Request.Headers.TryGetValue(AuthenticationConstants.APIKEYNAME, out var extractedApiKey))
+        // Only run API auth on API routes
+        if (!context.Request.Path.StartsWithSegments("/api"))
         {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Api Key was not provided.");
-            return;
-        }
-
-        var user = apiKeyService.Execute(extractedApiKey!);
-
-        if (user is null)
-        {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Unauthorized client.");
+            await next(context);
         }
         else
         {
-            using (_logger.BeginScope("requester: {requester}", user.UserName))
+            if (!context.Request.Headers.TryGetValue(AuthenticationConstants.APIKEYNAME, out var extractedApiKey))
             {
-                await next(context);
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync("Api Key was not provided.");
+                return;
+            }
+
+            var user = apiKeyService.Execute(extractedApiKey!);
+
+            if (user is null)
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync("Unauthorized client.");
+            }
+            else
+            {
+                using (_logger.BeginScope("requester: {requester}", user.UserName))
+                {
+                    await next(context);
+                }
             }
         }
     }
