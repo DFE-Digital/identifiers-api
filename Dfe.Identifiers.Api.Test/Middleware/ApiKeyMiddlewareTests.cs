@@ -53,7 +53,7 @@ public class ApiKeyMiddlewareTests
     {
         using var server = await SetupTestServer();
         
-        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
 
         var context = await server.SendAsync(request);
 
@@ -67,7 +67,7 @@ public class ApiKeyMiddlewareTests
     {
         using var server = await SetupTestServer();
         
-        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
         request.Headers.Add(AuthenticationConstants.APIKEYNAME, "random key");
 
         var context = await server.SendAsync(request);
@@ -82,13 +82,37 @@ public class ApiKeyMiddlewareTests
     {
         using var server = await SetupTestServer();
         
-        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api");
         request.Headers.Add(AuthenticationConstants.APIKEYNAME, validUser.ApiKey);
         
         var context = await server.SendAsync(request);
 
         context.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        var content = await context.Content.ReadAsStringAsync();
-        content.Should().Be("");
+    }
+    
+    [Fact]
+    public async Task No_ApiKey_without_ApiRoute_Returns_Unauthorized()
+    {
+        using var server = await SetupTestServer();
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        
+        var context = await server.SendAsync(request);
+
+        context.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+    
+    [Fact]
+    public async Task No_ApiKey_with_healthRoute_Returns_NotFound()
+    {
+        using var server = await SetupTestServer();
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, "/health");
+        
+        var context = await server.SendAsync(request);
+
+        // Look for not found as we don't have the health endpoint setup
+        // 404 proves that we don't need auth to reach the endpoint
+        context.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }

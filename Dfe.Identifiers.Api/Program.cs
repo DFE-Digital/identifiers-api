@@ -18,6 +18,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapHealthChecks("/health");
+
 app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();

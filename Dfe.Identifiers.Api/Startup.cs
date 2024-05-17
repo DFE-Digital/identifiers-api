@@ -17,6 +17,7 @@ public class Startup(IConfiguration configuration)
         services.AddApplicationInsightsTelemetry();
         services.AddControllers();
         services.AddEndpointsApiExplorer();
+        services.AddHealthChecks();
         services.AddSwaggerGen(c =>
         {
             c.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme
