@@ -41,5 +41,5 @@ jobs:
         run: npm install
 
       - name: Run Cypress (${{ inputs.environment }})
-        if: inputs.environment == 'staging' || inputs.environment == 'dev'
+        if: inputs.environment == 'staging' || inputs.environment == 'development'
         run: npm run cy:run -- --env apiKey="${{ secrets.IDENTIFIERS_API_KEY }}",url="${{ secrets.IDENTIFIERS_API_BASE_URL }}"
