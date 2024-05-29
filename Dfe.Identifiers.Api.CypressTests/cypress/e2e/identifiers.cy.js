@@ -21,7 +21,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.trusts).to.have.lengthOf.at.most(1)
         expect(response.body.trusts[0]).to.have.keys('uid', 'ukprn', 'trustReference')
         expect(response.body.trusts[0]).to.eql({
@@ -44,7 +44,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.trusts).to.have.lengthOf.at.most(1)
         expect(response.body.trusts[0]).to.have.keys('uid', 'ukprn', 'trustReference')
         expect(response.body.trusts[0]).to.eql({
@@ -67,7 +67,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.trusts).to.have.lengthOf.at.most(1)
         expect(response.body.trusts[0]).to.have.keys('uid', 'ukprn', 'trustReference')
         expect(response.body.trusts[0]).to.eql({
@@ -97,7 +97,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.establishments).to.have.lengthOf.at.most(1)
         expect(response.body.establishments[0]).to.have.keys('laestab', 'ukprn', 'urn')
         expect(response.body.establishments[0]).to.eql({
@@ -120,7 +120,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.establishments).to.have.lengthOf.at.most(1)
         expect(response.body.establishments[0]).to.have.keys('laestab', 'ukprn', 'urn')
         expect(response.body.establishments[0]).to.eql({
@@ -143,7 +143,7 @@ describe('Identifiers endpoint tests', () => {
         }
       }).then((response) => {
         expect(response.status).to.eq(200)
-        expect(response.body).to.have.keys('trusts', 'establishments')
+        expect(response.body).to.have.keys('trusts', 'establishments', 'conversionProjects', 'transferProjects', 'formAMatProjects')
         expect(response.body.establishments).to.have.lengthOf.at.most(1)
         expect(response.body.establishments[0]).to.have.keys('laestab', 'ukprn', 'urn')
         expect(response.body.establishments[0]).to.eql({
