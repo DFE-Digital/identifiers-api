@@ -1,6 +1,6 @@
 describe('Identifiers endpoint tests', () => {
 
-  // const apiKey = Cypress.env('apiKey')
+  const apiKey = Cypress.env('apiKey')
   const baseUrl = `${Cypress.env('url')}`
   const identifiersEndpoint = 'api/identifier'
 
@@ -16,7 +16,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${trustReferenceNumber}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
@@ -39,7 +39,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${ukprn}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
@@ -62,7 +62,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${uid}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
@@ -92,7 +92,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${sanitiseLaestab(laestab)}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
@@ -115,7 +115,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${ukprn}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
@@ -138,7 +138,7 @@ describe('Identifiers endpoint tests', () => {
         method: 'GET',
         url: `${baseUrl}/${identifiersEndpoint}/${urn}`,
         headers: {
-          //ApiKey: apiKey,
+          ApiKey: apiKey,
           "Content-Type": "application/json"
         }
       }).then((response) => {
