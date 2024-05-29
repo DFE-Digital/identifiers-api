@@ -88,25 +88,6 @@ jobs:
   cypress-tests:
     name: Run Cypress Tests
     if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'development'
-    needs: [ deploy-image, set-env ]
-    runs-on: ubuntu-22.04
-    environment: ${{ needs.set-env.outputs.environment }}
-    defaults:
-      run:
-        working-directory: Dfe.Identifiers.Api.CypressTests
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-
-      - name: Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Npm install
-        run: npm ci
-
-      - name: Run cypress
-        run: npm run cy:run -- --env apiKey="${{ secrets.IDENTIFIERS_API_KEY }}",url="${{ secrets.IDENTIFIERS_API_BASE_URL }}"
+    uses: ./.github/workflows/cypress-tests.yml
+    with:
+      environment: ${{ needs/set-env.outputs.environment }}
