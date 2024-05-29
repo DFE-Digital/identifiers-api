@@ -92,3 +92,6 @@ jobs:
     uses: ./.github/workflows/cypress-tests.yml
     with:
       environment: ${{ needs.set-env.outputs.environment }}
+    secrets:
+      IDENTIFIERS_API_KEY: ${{ secrets.IDENTIFIERS_API_KEY }}
+      IDENTIFIERS_API_BASE_URL: ${{ secrets.IDENTIFIERS_API_BASE_URL }}
