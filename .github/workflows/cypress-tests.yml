@@ -6,6 +6,11 @@ on:
       environment:
         required: true
         type: string
+    secrets:
+      IDENTIFIERS_API_KEY:
+        required: true
+      IDENTIFIERS_API_BASE_URL:
+        required: true
   workflow_dispatch:
     inputs:
       environment:
