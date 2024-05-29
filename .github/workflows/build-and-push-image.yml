@@ -90,4 +90,4 @@ jobs:
     if: needs.set-env.outputs.environment == 'test' || needs.set-env.outputs.environment == 'development'
     uses: ./.github/workflows/cypress-tests.yml
     with:
-      environment: ${{ needs/set-env.outputs.environment }}
+      environment: ${{ needs.set-env.outputs.environment }}
