@@ -158,5 +158,5 @@ describe('Identifiers endpoint tests', () => {
 })
 
 function sanitiseLaestab(laestab) {
-  return laestab.replace('/', '%2F')
+  return laestab.replace('/', '-')
 }
