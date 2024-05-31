@@ -1,4 +1,5 @@
-﻿using Dfe.Identifiers.Api.Interfaces;
+﻿using System.Reflection;
+using Dfe.Identifiers.Api.Interfaces;
 using Dfe.Identifiers.Api.Services;
 using Dfe.Identifiers.Application;
 using Dfe.Identifiers.Domain.Authentication;
@@ -36,6 +37,8 @@ public class Startup(IConfiguration configuration)
             };
         
             c.AddSecurityRequirement(new OpenApiSecurityRequirement {{ securityScheme, new List<string>() }});
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
         services.AddScoped<ITrustRepository, TrustRepository>();
         services.AddScoped<IEstablishmentRepository, EstablishmentRepository>();
