@@ -15,7 +15,7 @@ on:
     - '!Dfe.Identifiers.Api.CypressTests/**'
 
 env:
-  DOTNET_VERSION: '8.20.x'
+  DOTNET_VERSION: '8.0.x'
   JAVA_VERSION: '17'
   CONNECTION_STRING: "Server=localhost,1433;Database=sip;User Id=sa;TrustServerCertificate=True;Password=StrongPassword905"
 
