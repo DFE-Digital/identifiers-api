@@ -133,7 +133,7 @@ If everything looks good, answer `yes` and wait for the new infrastructure to be
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.106.1 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 3.112.0 |
 
 ## Modules
 
