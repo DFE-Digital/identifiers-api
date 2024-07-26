@@ -134,6 +134,12 @@ variable "cdn_frontdoor_enable_rate_limiting" {
   type        = bool
 }
 
+variable "cdn_frontdoor_rate_limiting_duration_in_minutes" {
+  description = "CDN Front Door rate limiting duration in minutes"
+  type        = number
+  default     = 5
+}
+
 variable "cdn_frontdoor_host_add_response_headers" {
   description = "List of response headers to add at the CDN Front Door `[{ \"name\" = \"Strict-Transport-Security\", \"value\" = \"max-age=31536000\" }]`"
   type        = list(map(string))
